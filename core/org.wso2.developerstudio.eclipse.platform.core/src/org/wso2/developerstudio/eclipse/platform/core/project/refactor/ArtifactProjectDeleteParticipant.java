@@ -44,6 +44,8 @@ import java.util.List;
  * that. Changes we initiate in this class are shown as preview in the project.
  */
 public class ArtifactProjectDeleteParticipant extends DeleteParticipant {
+	private static final String DISTRIBUTION_PROJECT_NATURE = "org.wso2.developerstudio.eclipse.distribution.project.nature";
+	private static final String MAVEN_MULTI_MODULE_PROJECT_NATURE = "org.wso2.developerstudio.eclipse.mavenmultimodule.project.nature";
 	private static final String POM_XML = "pom.xml";
 	private static IDeveloperStudioLog log = Logger.getLog(Activator.PLUGIN_ID);
 	private IProject originalProject;
@@ -76,7 +78,7 @@ public class ArtifactProjectDeleteParticipant extends DeleteParticipant {
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (IProject project : projects) {
 			if (project.isOpen() &&
-			    project.hasNature("org.wso2.developerstudio.eclipse.distribution.project.nature")) {
+			    project.hasNature(DISTRIBUTION_PROJECT_NATURE)) {
 				try {
 					deleteDependencies(deleteChange, project, originalProject);
 				} catch (Exception e) {
@@ -85,7 +87,7 @@ public class ArtifactProjectDeleteParticipant extends DeleteParticipant {
 			}
 		}
 		if (originalProject.isOpen() &&
-		    originalProject.hasNature("org.wso2.developerstudio.eclipse.mavenmultimodule.project.nature")) {
+		    originalProject.hasNature(MAVEN_MULTI_MODULE_PROJECT_NATURE)) {
 			MavenProject mavenProject = ProjectRefactorUtils.getMavenProject(originalProject);
 			List<String> modulesofOrignal = mavenProject.getModules();
 			if (!modulesofOrignal.isEmpty()) {
