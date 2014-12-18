@@ -78,12 +78,15 @@ public class FilterMediatorTransformer extends AbstractEsbNodeTransformer {
 			    !visualFilter.getSource().getPropertyValue().equals("")) {
 
 				SynapsePath source =
-				               CustomSynapsePathFactory.getSynapsePath(visualFilter.getSource().getPropertyValue());
+				                     CustomSynapsePathFactory.getSynapsePath(visualFilter.getSource()
+				                                                                         .getPropertyValue());
 
 				if (visualFilter.getXpath().getNamespaces() != null &&
 				    !(source instanceof SynapseJsonPath)) {
 					for (int i = 0; i < visualFilter.getSource().getNamespaces().keySet().size(); ++i) {
-						String prefix = (String) visualFilter.getSource().getNamespaces().keySet().toArray()[i];
+						String prefix =
+						                (String) visualFilter.getSource().getNamespaces().keySet()
+						                                     .toArray()[i];
 						String namespaceUri = visualFilter.getSource().getNamespaces().get(prefix);
 						source.addNamespace(prefix, namespaceUri);
 					}
@@ -134,7 +137,7 @@ public class FilterMediatorTransformer extends AbstractEsbNodeTransformer {
 
 		// Build filter mediator.
 		org.apache.synapse.mediators.filters.FilterMediator filterMediator =
-		                                              new org.apache.synapse.mediators.filters.FilterMediator();
+		                                                                     new org.apache.synapse.mediators.filters.FilterMediator();
 		setCommonProperties(filterMediator, visualFilter);
 		if (visualFilter.getConditionType() == FilterMediatorConditionType.XPATH) {
 			// TODO: validate xpaths before adding
@@ -143,7 +146,7 @@ public class FilterMediatorTransformer extends AbstractEsbNodeTransformer {
 			    !visualFilter.getXpath().getPropertyValue().equals("")) {
 
 				SynapsePath xPath =
-				             CustomSynapsePathFactory.getSynapsePath(visualFilter.getXpath()
+				                    CustomSynapsePathFactory.getSynapsePath(visualFilter.getXpath()
 				                                                                        .getPropertyValue());
 
 				if (visualFilter.getXpath().getNamespaces() != null &&
@@ -204,6 +207,7 @@ public class FilterMediatorTransformer extends AbstractEsbNodeTransformer {
 		newElseInfo.setParentSequence(elseMediator);
 		doTransform(newElseInfo, visualFilter.getFailOutputConnector());
 
-		doTransformWithinSequence(info, ((FilterMediator) subject).getOutputConnector().getOutgoingLink(), sequence);
+		doTransformWithinSequence(info, ((FilterMediator) subject).getOutputConnector()
+		                                                          .getOutgoingLink(), sequence);
 	}
 }

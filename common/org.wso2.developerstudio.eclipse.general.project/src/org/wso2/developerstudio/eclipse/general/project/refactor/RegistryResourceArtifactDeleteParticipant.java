@@ -51,7 +51,7 @@ public class RegistryResourceArtifactDeleteParticipant extends DeleteParticipant
 
 	@Override
 	public RefactoringStatus checkConditions(IProgressMonitor arg0, CheckConditionsContext arg1)
-	                                                                                            throws OperationCanceledException {
+	                                                                                  throws OperationCanceledException {
 		return RefactoringStatus.createWarningStatus("You are about to delete a Registry Resource Artifact");
 	}
 
@@ -101,11 +101,9 @@ public class RegistryResourceArtifactDeleteParticipant extends DeleteParticipant
 					if (originalResource instanceof IFile) {
 						projectDependency.setArtifactId(originalResource.getName()
 						                                                .substring(0,
-						                                                           originalResource.getName()
-						                                                                           .length() -
-						                                                                   originalResource.getFileExtension()
-						                                                                                   .length() -
-						                                                                   1));
+						                                                  originalResource.getName().length() -
+						                                                  originalResource.getFileExtension().length() -
+						                                                  1));
 					} else {
 						projectDependency.setArtifactId(originalResource.getName());
 					}
@@ -113,8 +111,7 @@ public class RegistryResourceArtifactDeleteParticipant extends DeleteParticipant
 					for (Iterator<?> iterator = dependencies.iterator(); iterator.hasNext();) {
 						Dependency dependency = (Dependency) iterator.next();
 						if (RefactorUtils.isDependenciesEqual(projectDependency, dependency)) {
-							deleteChange.add(new MavenConfigurationFileDeleteChange(
-							                                                        project.getName(),
+							deleteChange.add(new MavenConfigurationFileDeleteChange(project.getName(),
 							                                                        pomFile,
 							                                                        projectDependency));
 						}
@@ -137,7 +134,6 @@ public class RegistryResourceArtifactDeleteParticipant extends DeleteParticipant
 	}
 
 	private String getDirectoryPrefix() {
-
 		String directoryPrefix = "";
 		InputStream in = null;
 

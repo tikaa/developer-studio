@@ -17,25 +17,21 @@ public class EnqueueMediatorTransformer extends AbstractEsbNodeTransformer{
 			throws Exception {
 		information.getParentSequence().addChild(createEnqueueMediator(subject));
 		// Transform the property mediator output data flow path.
-		doTransform(information,
-				((EnqueueMediator) subject).getOutputConnector());		
+		doTransform(information, ((EnqueueMediator) subject).getOutputConnector());		
 	}
 
 	public void createSynapseObject(TransformationInfo info, EObject subject,
 			List<Endpoint> endPoints) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	public void transformWithinSequence(TransformationInfo information,
 			EsbNode subject, SequenceMediator sequence) throws Exception {
 		sequence.addChild(createEnqueueMediator(subject));
 		doTransformWithinSequence(information,((EnqueueMediator)subject).getOutputConnector().getOutgoingLink(),sequence);
-		
 	}
 
 	private org.apache.synapse.mediators.builtin.EnqueueMediator createEnqueueMediator(EsbNode subject) throws Exception{
-	
 		// Check subject.
 		Assert.isTrue(subject instanceof EnqueueMediator, "Invalid subject.");
 		EnqueueMediator visualEnqueue = (EnqueueMediator) subject;

@@ -45,9 +45,7 @@ public class ThrottleMediatorDeserializer extends AbstractEsbNodeDeserializer<Ab
 	public ThrottleMediator createNode(IGraphicalEditPart part,AbstractMediator mediator) {
 		
 		Assert.isTrue(mediator instanceof org.apache.synapse.mediators.throttle.ThrottleMediator, "Unsupported mediator passed in for deserialization at "+ this.getClass());
-		
 		org.apache.synapse.mediators.throttle.ThrottleMediator throttleMediator = (org.apache.synapse.mediators.throttle.ThrottleMediator)mediator;
-		
 		ThrottleMediator visualThrottle = (ThrottleMediator)DeserializerUtils.createNode(part, EsbElementTypes.ThrottleMediator_3493);
 		
 		setElementToEdit(visualThrottle);
@@ -55,7 +53,6 @@ public class ThrottleMediatorDeserializer extends AbstractEsbNodeDeserializer<Ab
 		refreshEditPartMap();
 		
 		if(throttleMediator.getId() != null){
-			
 			executeSetValueCommand(THROTTLE_MEDIATOR__GROUP_ID, throttleMediator.getId());
 		}
 		
@@ -67,44 +64,28 @@ public class ThrottleMediatorDeserializer extends AbstractEsbNodeDeserializer<Ab
 		} else {
 			
 			executeSetValueCommand(THROTTLE_MEDIATOR__POLICY_TYPE, ThrottlePolicyType.INLINE);
-			
 			OMElement throttlePolicy = throttleMediator.getInLinePolicy();
-			
 			if (throttlePolicy != null) {
-				
-				
 				OMElement mediatorThrottleAssertion = throttlePolicy.getFirstElement();
-
 				if (mediatorThrottleAssertion != null) {
 					
 					@SuppressWarnings("unchecked")
 					Iterator<OMElement> maximumConcAccIterator = mediatorThrottleAssertion.getChildrenWithLocalName("MaximumConcurrentAccess");
 					OMElement maximumConcurrentAccess = maximumConcAccIterator.next();
-					
-					
-					if(maximumConcurrentAccess != null && maximumConcurrentAccess.getText() != null && DeserializerUtils.isInteger(maximumConcurrentAccess.getText())){
-						
+					if(maximumConcurrentAccess != null && maximumConcurrentAccess.getText() != null && 
+							DeserializerUtils.isInteger(maximumConcurrentAccess.getText())){
 					         int mca = Integer.parseInt(maximumConcurrentAccess.getText());
-					         
 					         executeSetValueCommand(THROTTLE_MEDIATOR__MAX_CONCURRENT_ACCESS_COUNT, mca);
 					}
-					
-					
 					//Setting throttle policy entries.
 					for(@SuppressWarnings("unchecked")
 					Iterator<OMElement> it = mediatorThrottleAssertion.getChildrenWithLocalName("Policy"); it.hasNext();){
-							
 							OMElement outerPolicy = it.next();
-							
 							if(outerPolicy != null){
-								
 							     ThrottlePolicyEntry throttlePolicyEntry = createVisualPolicyEntry(outerPolicy);
-							    
 							     executeAddValueCommand(visualThrottle.getPolicyEntries(), throttlePolicyEntry);
-							 
 							}
 						}
-					
 				}
 			}
 			
@@ -147,73 +128,46 @@ public class ThrottleMediatorDeserializer extends AbstractEsbNodeDeserializer<Ab
 				executeSetValueCommand(THROTTLE_MEDIATOR__ON_REJECT_BRANCHSEQUENCE_KEY, keyProperty);
 			}
 		}
-	
 		return visualThrottle;
 	}
 	
 	
 	private ThrottlePolicyEntry createVisualPolicyEntry(OMElement outerPolicy){
-		
 		ThrottlePolicyEntry visualPolicyEntry = EsbFactory.eINSTANCE.createThrottlePolicyEntry();
-		
 		@SuppressWarnings("unchecked")
 		Iterator<OMElement> policyIdElemItr = outerPolicy.getChildrenWithLocalName("ID");
 		OMElement policyIdElem = policyIdElemItr.next();
-		
 		if(policyIdElem != null){
-			
 			//get type  attribute
 			OMAttribute typeAttribute = policyIdElem.getAttribute(new QName("http://www.wso2.org/products/wso2commons/throttle","type"));
-
-			if (typeAttribute != null
-					&& typeAttribute.getAttributeValue() != null) {
+			if (typeAttribute != null && typeAttribute.getAttributeValue() != null) {
 				String type = typeAttribute.getAttributeValue();
-
 				if (type != null && !StringUtils.isBlank(type.trim())) {
-
 					if (type.equals("IP")) {
-
-						visualPolicyEntry
-								.setThrottleType(ThrottleConditionType.IP);
-
+						visualPolicyEntry.setThrottleType(ThrottleConditionType.IP);
 					} else if (type.equals("DOMAIN")) {
-
-						visualPolicyEntry
-								.setThrottleType(ThrottleConditionType.DOMAIN);
-
+						visualPolicyEntry.setThrottleType(ThrottleConditionType.DOMAIN);
 					}
 				}
 			}
 			//Setting range text
 			if(policyIdElem.getText() != null && !StringUtils.isBlank(policyIdElem.getText().trim())){
-				
 				 visualPolicyEntry.setThrottleRange(policyIdElem.getText());
 			}
 		}
 		@SuppressWarnings("unchecked")
 		Iterator<OMElement> innerPolicyItr = outerPolicy.getChildrenWithLocalName("Policy");
 		OMElement innerPolicy = innerPolicyItr.next();
-		
 		if(innerPolicy != null){
-			
 			OMElement accessTypeElem  =  innerPolicy.getFirstElement();
-			
 			if(accessTypeElem != null && accessTypeElem.getLocalName() != null){
-				
 				if(accessTypeElem.getLocalName().equals("Allow")){
-					
 					visualPolicyEntry.setAccessType(ThrottleAccessType.ALLOW);
-					
 				}else if(accessTypeElem.getLocalName().equals("Deny")){
-					
 					visualPolicyEntry.setAccessType(ThrottleAccessType.DENY);
-					
 				}else if(accessTypeElem.getLocalName().equals("Control")){
-					
 					visualPolicyEntry.setAccessType(ThrottleAccessType.CONTROL);
-					
 					configureAccessControlParams(visualPolicyEntry,accessTypeElem);
-					
 				}
 			}
 		}
@@ -223,7 +177,6 @@ public class ThrottleMediatorDeserializer extends AbstractEsbNodeDeserializer<Ab
 	}
 	
 	private void configureAccessControlParams(ThrottlePolicyEntry visualPolicyEntry, OMElement accessTypeElem){
-		
 		@SuppressWarnings("unchecked")
 		Iterator<OMElement> accessPolicyElemItr = accessTypeElem.getChildrenWithLocalName("Policy");
 		OMElement accessPolicyElem = accessPolicyElemItr.next();
@@ -231,27 +184,21 @@ public class ThrottleMediatorDeserializer extends AbstractEsbNodeDeserializer<Ab
 		@SuppressWarnings("unchecked")
 		Iterator<OMElement> maximumCountElemItr = accessPolicyElem.getChildrenWithLocalName("MaximumCount");
 		OMElement maximumCountElem = maximumCountElemItr.next(); 
-		
 		if(maximumCountElem != null && maximumCountElem.getText() != null && DeserializerUtils.isInteger(maximumCountElem.getText().trim())){
-			
 			visualPolicyEntry.setMaxRequestCount(Integer.parseInt(maximumCountElem.getText()));
 		}
 		
 		@SuppressWarnings("unchecked")
 		Iterator<OMElement> unitTimeElemItr = accessPolicyElem.getChildrenWithLocalName("UnitTime");
 		OMElement unitTimeElem = unitTimeElemItr.next();
-		
 		if(unitTimeElem != null && unitTimeElem.getText() != null && DeserializerUtils.isInteger(unitTimeElem.getText())){
-			
 			visualPolicyEntry.setUnitTime(Integer.parseInt(unitTimeElem.getText()));
 		}
 		
 		@SuppressWarnings("unchecked")
 		Iterator<OMElement> prohibitTimePeriodElemItr = accessPolicyElem.getChildrenWithLocalName("ProhibitTimePeriod");
 		OMElement prohibitTimePeriodElem = prohibitTimePeriodElemItr.next();
-		
 		if(prohibitTimePeriodElem != null && prohibitTimePeriodElem.getText() != null && DeserializerUtils.isInteger(prohibitTimePeriodElem.getText())){
-			
 			visualPolicyEntry.setProhibitPeriod(Integer.parseInt(prohibitTimePeriodElem.getText()));
 		}
 	}
